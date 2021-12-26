@@ -1,5 +1,6 @@
 package com.example.bookauthor_app.entity;
 
+import com.example.bookauthor_app.util.STATUS;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +11,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -40,7 +43,16 @@ public class Book {
                 , fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     @JsonIgnore
-    List<Author> authors = new ArrayList<>();
+    Set<Author> authors = new HashSet<>();
+
+    @Column(name = "status",nullable = false)
+    private STATUS status;
+
+    public Book(String bookName, String isbn, String bookCategory) {
+        this.bookName = bookName;
+        this.isbn = isbn;
+        this.bookCategory = bookCategory;
+    }
 
     public void addAuthor(Author author){
         authors.add(author);

@@ -22,7 +22,7 @@ public class AuthorController {
     @PostMapping("/addAuthor")
     public ResponseEntity<DefaultResponse> addAuthor(@Valid @RequestBody AuthorDTO authorDTO){
         authorService.addAuthor(authorDTO);
-        return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK));
+        return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
     @GetMapping("/getAllAuthors")

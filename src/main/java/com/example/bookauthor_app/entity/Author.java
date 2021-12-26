@@ -34,6 +34,12 @@ public class Author {
 
     private STATUS status;
 
+    public Author(String authorName, Book book, STATUS status) {
+        this.authorName = authorName;
+        this.books.add(book);
+        this.status = status;
+    }
+
     public void addBook(Book book) {
         books.add(book);
     }

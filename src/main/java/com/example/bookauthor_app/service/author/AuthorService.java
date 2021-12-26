@@ -31,7 +31,7 @@ public class AuthorService implements AuthorInterface {
     public List<AuthorDTO> getAllAuthors() {
         List<AuthorDTO> authorDTOS = new ArrayList<>();
         authorRepository.findAll().forEach(author -> {
-            authorDTOS.add(new AuthorDTO(author.getAuthorName(), author.getBooks()));
+            authorDTOS.add(new AuthorDTO(author.getId(),author.getAuthorName(), author.getBooks()));
         });
         return authorDTOS;
     }
@@ -49,6 +49,6 @@ public class AuthorService implements AuthorInterface {
     @Override
     public AuthorDTO findOneAuthorById(Long id) {
         Optional<Author> authorOptional = authorRepository.findById(id);
-        return authorOptional.map(author -> new AuthorDTO(author.getAuthorName(), author.getBooks())).orElse(null);
+        return authorOptional.map(author -> new AuthorDTO(author.getId(),author.getAuthorName(), author.getBooks())).orElse(null);
     }
 }
