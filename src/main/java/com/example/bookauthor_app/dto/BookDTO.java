@@ -10,6 +10,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 public class BookDTO {
+    private Long id;
     private String bookName;
     private String isbn;
     private String bookCategory;

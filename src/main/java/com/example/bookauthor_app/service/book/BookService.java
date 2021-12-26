@@ -29,6 +29,11 @@ public class BookService implements BookInterface {
         Book book = new Book(bookDTO.getBookName().trim().toLowerCase(), bookDTO.getIsbn(), bookDTO.getBookCategory());
         book.setStatus(STATUS.ACTIVE);
         bookDTO.getAuthorDTOSet().forEach(authorDTO -> {
+            if (authorDTO.getAuthorName() == null) {
+                throw new IllegalArgumentException("Book Name cannot be null");
+            } else if (authorDTO.getAuthorName().isEmpty()) {
+                throw new IllegalArgumentException("Book Name cannot be empty");
+            }
             if (authorDTO.getId() != null) {
                 Optional<Author> author = authorRepository.findById(authorDTO.getId());
                 if (author.isPresent()) {
@@ -36,12 +41,13 @@ public class BookService implements BookInterface {
                     book.addAuthor(author.get());
                 }
             } else {
-                if (authorDTO.getAuthorName() == null) {
-                    throw new IllegalArgumentException("Book Name cannot be null");
-                } else if (authorDTO.getAuthorName().isEmpty()) {
-                    throw new IllegalArgumentException("Book Name cannot be empty");
+                Optional<Author> author = authorRepository.findAuthorByAuthorName(authorDTO.getAuthorName());
+                if (author.isPresent()) {
+                    author.get().addBook(book);
+                    book.addAuthor(author.get());
+                } else {
+                    book.addAuthor(new Author(authorDTO.getAuthorName().trim().toLowerCase(), book, STATUS.ACTIVE));
                 }
-                book.addAuthor(new Author(authorDTO.getAuthorName().trim().toLowerCase(), book, STATUS.ACTIVE));
             }
         });
         bookRepository.save(book);
