@@ -1,5 +1,6 @@
 package com.example.bookauthor_app.entity;
 
+import com.example.bookauthor_app.util.STATUS;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,9 +28,11 @@ public class Author {
     @NotEmpty(message = "Please provide author name!")
     private String authorName;
 
-   @ManyToMany(mappedBy = "authors")
+    @ManyToMany(mappedBy = "authors")
     private Set<Book> books = new HashSet<>();
 
+
+    private STATUS status;
 
     public void addBook(Book book) {
         books.add(book);
