@@ -20,24 +20,36 @@ public class AuthorController {
     private final AuthorService authorService;
 
     @PostMapping("/addAuthor")
-    public ResponseEntity<DefaultResponse> addAuthor(@Valid @RequestBody AuthorDTO authorDTO){
+    public ResponseEntity<DefaultResponse> addAuthor(@Valid @RequestBody AuthorDTO authorDTO) {
         authorService.addAuthor(authorDTO);
         return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
     @GetMapping("/getAllAuthors")
-    public List<AuthorDTO> authorDTOList(){
+    public List<AuthorDTO> authorDTOList() {
         return authorService.getAllAuthors();
     }
 
     @GetMapping("/findOneAuthor/{author_id}")
     public ResponseEntity<AuthorDTO> getAuthor(@PathVariable(value = "author_id") Long authorId) throws NotFoundException {
         AuthorDTO authorDTO = authorService.findOneAuthorById(authorId);
-        if (authorDTO == null){
-            throw new NotFoundException("The author with the id "+authorId+" was not found");
-        }else{
+        if (authorDTO == null) {
+            throw new NotFoundException("The author with the id " + authorId + " was not found");
+        } else {
             return ResponseEntity.ok().body(authorDTO);
         }
+    }
+
+    @PutMapping("/updateAuthor/{author_id}")
+    public ResponseEntity<?> updateAuthor(@PathVariable(value = "author_id") Long id, @Valid @RequestBody AuthorDTO authorDTO) throws NotFoundException {
+        authorService.updateAuthor(authorDTO, id);
+        return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
+    }
+
+    @DeleteMapping("/deleteAuthor/{author_id}")
+    public ResponseEntity<?> deleteAuthor(@PathVariable(value = "author_id") Long id) throws NotFoundException {
+        authorService.removeAuthor(id);
+        return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
 }

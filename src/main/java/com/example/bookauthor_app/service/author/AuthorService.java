@@ -8,6 +8,7 @@ import com.example.bookauthor_app.exception.NotFoundException;
 import com.example.bookauthor_app.repository.AuthorRepository;
 import com.example.bookauthor_app.repository.BookRepository;
 import com.example.bookauthor_app.service.book.BookService;
+import com.example.bookauthor_app.util.STATUS;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +24,14 @@ public class AuthorService implements AuthorInterface {
     @Override
     @Transactional
     public void addAuthor(AuthorDTO authorDTO) {
-        if (authorDTO.getAuthorName() == null) {
-            throw new IllegalArgumentException("Author Name cannot be null");
+        if(authorDTO == null){
+            throw new IllegalArgumentException("Author cannot be null");
+        }
+        if (authorDTO.getAuthorName() == null && authorDTO.getBookSet() == null) {
+            throw new IllegalArgumentException("Author Name or BookSet cannot be null");
         } else if (authorDTO.getAuthorName().isEmpty()) {
             throw new IllegalArgumentException("Author Name cannot be empty");
-        } else if (authorDTO.getBookSet() == null) {
-            throw new IllegalArgumentException("Books cannot be null");
-        } else if (authorDTO.getBookSet().size() == 0) {
+        }  else if (authorDTO.getBookSet().size() == 0) {
             throw new IllegalArgumentException("Author cannot be created without book");
         }
         authorDTO.getBookSet().forEach(bookDTO -> {
@@ -52,13 +54,36 @@ public class AuthorService implements AuthorInterface {
     }
 
     @Override
-    public void updateAuthor(AuthorDTO authorDTO) {
-
+    public void updateAuthor(AuthorDTO authorDTO, Long id) throws NotFoundException {
+        if(authorDTO == null){
+            throw new IllegalArgumentException("Author cannot be null");
+        }else if ((id != null)&&(authorDTO.getAuthorName() != null || !authorDTO.getAuthorName().isEmpty())){
+            Optional<Author> authorOptional = authorRepository.findById(id);
+            if(authorOptional.isPresent()){
+                if(authorRepository.findAuthorByAuthorName(authorDTO.getAuthorName()).isPresent()){
+                    throw new IllegalArgumentException("Author name must be unique");
+                }else{
+                    authorOptional.get().setAuthorName(authorDTO.getAuthorName());
+                    authorRepository.save(authorOptional.get());
+                }
+            }else{
+                throw new NotFoundException("Author with the Id "+authorDTO.getId()+" was not found.");
+            }
+        }
     }
 
     @Override
-    public void removeAuthor(AuthorDTO authorDTO) {
-
+    public void removeAuthor(Long id) throws NotFoundException {
+        Optional<Author> authorOptional = authorRepository.findById(id);
+        if (authorOptional.isPresent()){
+            Author author = authorOptional.get();
+            for (Book book :author.getBooks()) {
+                book.getAuthors().remove(author);
+            }
+            authorRepository.delete(author);
+        }else{
+            throw new NotFoundException("The Author with the Id "+id+" was not found");
+        }
     }
 
     @Override
