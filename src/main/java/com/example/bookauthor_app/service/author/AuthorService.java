@@ -24,14 +24,14 @@ public class AuthorService implements AuthorInterface {
     @Override
     @Transactional
     public void addAuthor(AuthorDTO authorDTO) {
-        if(authorDTO == null){
+        if (authorDTO == null) {
             throw new IllegalArgumentException("Author cannot be null");
         }
         if (authorDTO.getAuthorName() == null && authorDTO.getBookSet() == null) {
             throw new IllegalArgumentException("Author Name or BookSet cannot be null");
         } else if (authorDTO.getAuthorName().isEmpty()) {
             throw new IllegalArgumentException("Author Name cannot be empty");
-        }  else if (authorDTO.getBookSet().size() == 0) {
+        } else if (authorDTO.getBookSet().size() == 0) {
             throw new IllegalArgumentException("Author cannot be created without book");
         }
         authorDTO.getBookSet().forEach(bookDTO -> {
@@ -55,19 +55,19 @@ public class AuthorService implements AuthorInterface {
 
     @Override
     public void updateAuthor(AuthorDTO authorDTO, Long id) throws NotFoundException {
-        if(authorDTO == null){
+        if (authorDTO == null) {
             throw new IllegalArgumentException("Author cannot be null");
-        }else if ((id != null)&&(authorDTO.getAuthorName() != null || !authorDTO.getAuthorName().isEmpty())){
+        } else if ((id != null) && (authorDTO.getAuthorName() != null || !authorDTO.getAuthorName().isEmpty())) {
             Optional<Author> authorOptional = authorRepository.findById(id);
-            if(authorOptional.isPresent()){
-                if(authorRepository.findAuthorByAuthorName(authorDTO.getAuthorName()).isPresent()){
+            if (authorOptional.isPresent()) {
+                if (authorRepository.findAuthorByAuthorName(authorDTO.getAuthorName()).isPresent()) {
                     throw new IllegalArgumentException("Author name must be unique");
-                }else{
+                } else {
                     authorOptional.get().setAuthorName(authorDTO.getAuthorName());
                     authorRepository.save(authorOptional.get());
                 }
-            }else{
-                throw new NotFoundException("Author with the Id "+authorDTO.getId()+" was not found.");
+            } else {
+                throw new NotFoundException("Author with the Id " + authorDTO.getId() + " was not found.");
             }
         }
     }
@@ -75,14 +75,14 @@ public class AuthorService implements AuthorInterface {
     @Override
     public void removeAuthor(Long id) throws NotFoundException {
         Optional<Author> authorOptional = authorRepository.findById(id);
-        if (authorOptional.isPresent()){
+        if (authorOptional.isPresent()) {
             Author author = authorOptional.get();
-            for (Book book :author.getBooks()) {
+            for (Book book : author.getBooks()) {
                 book.getAuthors().remove(author);
             }
             authorRepository.delete(author);
-        }else{
-            throw new NotFoundException("The Author with the Id "+id+" was not found");
+        } else {
+            throw new NotFoundException("The Author with the Id " + id + " was not found");
         }
     }
 
