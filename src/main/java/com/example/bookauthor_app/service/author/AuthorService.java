@@ -10,6 +10,7 @@ import com.example.bookauthor_app.repository.AuthorRepository;
 import com.example.bookauthor_app.service.book.BookService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.util.*;
 
@@ -21,7 +22,7 @@ public class AuthorService implements AuthorInterface {
 
     @Override
     @Transactional
-    public void addAuthor(AuthorDTO authorDTO) {
+    public void add(AuthorDTO authorDTO) {
         if (authorDTO == null) {
             throw new IllegalArgumentException("The Author cannot be null.");
         }
@@ -34,25 +35,12 @@ public class AuthorService implements AuthorInterface {
         }
         authorDTO.getBooks().forEach(bookDTO -> {
             bookDTO.setAuthors(Set.of(authorDTO));
-            bookService.addBook(bookDTO);
+            bookService.add(bookDTO);
         });
     }
 
     @Override
-    public List<AuthorDTO> getAllAuthors() {
-        List<AuthorDTO> authorDTOS = new ArrayList<>();
-        authorRepository.findAll().forEach(author -> {
-            Set<BookDTO> bookDTOS = new HashSet<>();
-            author.getBooks().forEach(book -> {
-                bookDTOS.add(new BookDTO(null, book.getBookName(), book.getIsbn(), book.getBookCategory(), null));
-            });
-            authorDTOS.add(new AuthorDTO(author.getId(), author.getAuthorName(), bookDTOS));
-        });
-        return authorDTOS;
-    }
-
-    @Override
-    public void updateAuthor(AuthorDTO authorDTO, Long id) throws NotFoundException {
+    public void update(Long id, AuthorDTO authorDTO) throws NotFoundException {
         if (authorDTO == null) {
             throw new NullPointerException("The Author cannot be null.");
         } else if ((id != null) && (authorDTO.getAuthorName() != null || !authorDTO.getAuthorName().isEmpty())) {
@@ -71,7 +59,20 @@ public class AuthorService implements AuthorInterface {
     }
 
     @Override
-    public void deleteAuthor(Long id) throws NotFoundException {
+    public List<AuthorDTO> getAll() {
+        List<AuthorDTO> authorDTOS = new ArrayList<>();
+        authorRepository.findAll().forEach(author -> {
+            Set<BookDTO> bookDTOS = new HashSet<>();
+            author.getBooks().forEach(book -> {
+                bookDTOS.add(new BookDTO(null, book.getBookName(), book.getIsbn(), book.getBookCategory(), null));
+            });
+            authorDTOS.add(new AuthorDTO(author.getId(), author.getAuthorName(), bookDTOS));
+        });
+        return authorDTOS;
+    }
+
+    @Override
+    public void delete(Long id) throws NotFoundException {
         Optional<Author> authorOptional = authorRepository.findById(id);
         if (authorOptional.isPresent()) {
             Author author = authorOptional.get();
@@ -85,7 +86,7 @@ public class AuthorService implements AuthorInterface {
     }
 
     @Override
-    public AuthorDTO getAuthorById(Long id) {
+    public AuthorDTO findOne(Long id) {
         Optional<Author> authorOptional = authorRepository.findById(id);
 
         return authorOptional.map(author -> {
@@ -97,8 +98,9 @@ public class AuthorService implements AuthorInterface {
         }).orElse(null);
     }
 
+
     @Override
-    public List<AuthorBookCount> filterAuthorByBookCount(int counter) {
-        return authorRepository.findAuthorBookCount(counter);
+    public List<AuthorBookCount> filterAuthorByBookCount(int count) {
+        return authorRepository.findAuthorBookCount(count);
     }
 }

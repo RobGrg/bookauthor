@@ -1,5 +1,6 @@
 package com.example.bookauthor_app.controller;
 
+import com.example.bookauthor_app.controller.base.BaseControllerInterface;
 import com.example.bookauthor_app.dto.AuthorDTO;
 import com.example.bookauthor_app.projections.AuthorBookCount;
 import com.example.bookauthor_app.exception.DefaultResponse;
@@ -16,23 +17,26 @@ import java.util.List;
 @RestController()
 @RequestMapping("/api/authors")
 @AllArgsConstructor
-public class AuthorController {
+public class AuthorController implements BaseControllerInterface<AuthorDTO,Long> {
     private final AuthorService authorService;
 
     @PostMapping("/add")
-    public ResponseEntity<DefaultResponse> addAuthor(@Valid @RequestBody AuthorDTO authorDTO) {
-        authorService.addAuthor(authorDTO);
+    @Override
+    public ResponseEntity<DefaultResponse> add(@Valid @RequestBody AuthorDTO authorDTO) {
+        authorService.add(authorDTO);
         return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<?> getAllAuthors() {
-        return ResponseEntity.ok(authorService.getAllAuthors());
+    @Override
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(authorService.getAll());
     }
 
     @GetMapping("/findOne/{author_id}")
-    public ResponseEntity<AuthorDTO> getAuthor(@PathVariable(value = "author_id") Long authorId) throws NotFoundException {
-        AuthorDTO authorDTO = authorService.getAuthorById(authorId);
+    @Override
+    public ResponseEntity<AuthorDTO> findOne(@PathVariable(value = "author_id") Long authorId) throws NotFoundException {
+        AuthorDTO authorDTO = authorService.findOne(authorId);
         if (authorDTO == null) {
             throw new NotFoundException("The author with the id " + authorId + " was not found");
         } else {
@@ -41,14 +45,16 @@ public class AuthorController {
     }
 
     @PutMapping("/update/{author_id}")
-    public ResponseEntity<?> updateAuthor(@PathVariable(value = "author_id") Long id, @Valid @RequestBody AuthorDTO authorDTO) throws NotFoundException {
-        authorService.updateAuthor(authorDTO, id);
+    @Override
+    public ResponseEntity<?> update(@PathVariable(value = "author_id") Long id, @Valid @RequestBody AuthorDTO authorDTO) throws NotFoundException {
+        authorService.update(id,authorDTO);
         return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
     @DeleteMapping("/delete/{author_id}")
-    public ResponseEntity<?> deleteAuthor(@PathVariable(value = "author_id") Long id) throws NotFoundException {
-        authorService.deleteAuthor(id);
+    @Override
+    public ResponseEntity<?> delete(@PathVariable(value = "author_id") Long id) throws NotFoundException {
+        authorService.delete(id);
         return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
