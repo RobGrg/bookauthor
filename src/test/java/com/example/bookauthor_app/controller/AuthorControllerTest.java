@@ -1,6 +1,8 @@
 package com.example.bookauthor_app.controller;
 
 import com.example.bookauthor_app.BookauthorAppApplication;
+import com.example.bookauthor_app.dto.AuthorDTO;
+import com.example.bookauthor_app.dto.BookDTO;
 import com.example.bookauthor_app.projections.AuthorBookCount;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
@@ -20,6 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,23 +36,23 @@ class AuthorControllerTest {
 
     @Test
     void addAuthor() {
+        HttpHeaders headers = new HttpHeaders();
+        // give authorName unique
+        String authorName = "Electronic";
+        String bookName = "Fragger Concept";
+        AuthorDTO authorDTO = new AuthorDTO(null, authorName, Set.of(new BookDTO(null, bookName, null, null, null)));
+        ResponseEntity<AuthorDTO> response = testRestTemplate.postForEntity(URL + "/add",
+                authorDTO, AuthorDTO.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
     void getAllAuthors() throws Exception {
-
-    }
-
-    @Test
-    void getAuthor() {
-    }
-
-    @Test
-    void updateAuthor() {
-    }
-
-    @Test
-    void deleteAuthor() {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        ResponseEntity<String> response = testRestTemplate.exchange(URL + "/getAll",
+                HttpMethod.GET, entity, String.class);
+        assertNotNull(response.getBody());
     }
 
     @Test
