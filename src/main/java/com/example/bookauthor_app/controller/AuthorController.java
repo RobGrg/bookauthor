@@ -1,6 +1,7 @@
 package com.example.bookauthor_app.controller;
 
 import com.example.bookauthor_app.dto.AuthorDTO;
+import com.example.bookauthor_app.projections.AuthorBookCount;
 import com.example.bookauthor_app.exception.DefaultResponse;
 import com.example.bookauthor_app.exception.NotFoundException;
 import com.example.bookauthor_app.service.author.AuthorService;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController()
 @RequestMapping("/api/authors")
@@ -19,20 +19,20 @@ import java.util.stream.Collectors;
 public class AuthorController {
     private final AuthorService authorService;
 
-    @PostMapping("/addAuthor")
+    @PostMapping("/add")
     public ResponseEntity<DefaultResponse> addAuthor(@Valid @RequestBody AuthorDTO authorDTO) {
         authorService.addAuthor(authorDTO);
         return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
-    @GetMapping("/getAllAuthors")
-    public List<AuthorDTO> authorDTOList() {
-        return authorService.getAllAuthors();
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllAuthors() {
+        return ResponseEntity.ok(authorService.getAllAuthors());
     }
 
-    @GetMapping("/findOneAuthor/{author_id}")
+    @GetMapping("/findOne/{author_id}")
     public ResponseEntity<AuthorDTO> getAuthor(@PathVariable(value = "author_id") Long authorId) throws NotFoundException {
-        AuthorDTO authorDTO = authorService.findOneAuthorById(authorId);
+        AuthorDTO authorDTO = authorService.getAuthorById(authorId);
         if (authorDTO == null) {
             throw new NotFoundException("The author with the id " + authorId + " was not found");
         } else {
@@ -40,16 +40,21 @@ public class AuthorController {
         }
     }
 
-    @PutMapping("/updateAuthor/{author_id}")
+    @PutMapping("/update/{author_id}")
     public ResponseEntity<?> updateAuthor(@PathVariable(value = "author_id") Long id, @Valid @RequestBody AuthorDTO authorDTO) throws NotFoundException {
         authorService.updateAuthor(authorDTO, id);
         return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
-    @DeleteMapping("/deleteAuthor/{author_id}")
+    @DeleteMapping("/delete/{author_id}")
     public ResponseEntity<?> deleteAuthor(@PathVariable(value = "author_id") Long id) throws NotFoundException {
-        authorService.removeAuthor(id);
+        authorService.deleteAuthor(id);
         return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
+    }
+
+    @GetMapping("/filterByBookCount/{count}")
+    public ResponseEntity<?> filterAuthorByBookCount(@PathVariable(name = "count") int count) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(authorService.filterAuthorByBookCount(count));
     }
 
 }

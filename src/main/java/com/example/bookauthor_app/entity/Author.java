@@ -14,6 +14,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
+@NamedNativeQueries(@NamedNativeQuery(name = "Author.findAuthorBookCount",
+        query = "select a.author_name as author,ba.cnt as bookCount from author as a inner join(\n" +
+                "    select count(books_id) as cnt,\n" +
+                "           authors_id as id from book_authors\n" +
+                "    group by authors_id\n" +
+                "    ) as ba on a.id = ba.id\n" +
+                "    where ba.cnt = :counter\n" +
+                "    order by a.author_name;"))
 @Entity
 @Getter
 @AllArgsConstructor
