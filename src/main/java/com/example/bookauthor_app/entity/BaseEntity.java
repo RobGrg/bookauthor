@@ -24,6 +24,7 @@ public class BaseEntity {
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
+
     // Since for current We don't have any user system
     // I left it here for future if we want to implement
     //    @CreatedBy

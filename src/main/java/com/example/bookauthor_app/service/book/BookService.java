@@ -37,6 +37,7 @@ public class BookService implements BookInterface {
             throw new IllegalArgumentException("Book name cannot be empty");
         }
         Book book = new Book(bookDTO.getBookName().trim().toLowerCase(), bookDTO.getIsbn(), bookDTO.getBookCategory());
+//        For Now By default active status is given, this can modified as per requirement
         book.setStatus(STATUS.ACTIVE);
         bookDTO.getAuthors().forEach(authorDTO -> {
             if (authorDTO.getAuthorName() == null) {
@@ -131,7 +132,7 @@ public class BookService implements BookInterface {
         }
     }
 
-    
+
     @Override
     public BookDTO findOne(Long id) {
         Optional<Book> bookOptional = bookRepository.findById(id);
