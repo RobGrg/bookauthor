@@ -21,7 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Book extends BaseEntity{
+public class Book extends BaseEntity {
 
     @Column(name = "book_name", nullable = false, unique = true)
     @NotEmpty(message = "Please provide Book Name!")
@@ -35,13 +35,13 @@ public class Book extends BaseEntity{
     @Column(name = "book_category", nullable = true)
     private String bookCategory;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.REMOVE}
-                , fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE}
+            , fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     @JsonIgnore
     Set<Author> authors = new HashSet<>();
 
-    @Column(name = "status",nullable = false)
+    @Column(name = "status", nullable = false)
     private STATUS status;
 
     public Book(String bookName, String isbn, String bookCategory) {
@@ -50,7 +50,7 @@ public class Book extends BaseEntity{
         this.bookCategory = bookCategory;
     }
 
-    public void addAuthor(Author author){
+    public void addAuthor(Author author) {
         authors.add(author);
     }
 

@@ -21,6 +21,13 @@ public class BookService implements BookInterface {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
 
+    /*
+    @param bookDTO cannot be null
+    bookDTO can have nested authorDTO child
+    Book and Author will be added together
+    Authors can be new or already in the system
+    @throws IllegalArgumentException for null or empty book name or author name
+     */
     @Override
     @Transactional
     public void add(BookDTO bookDTO) {
@@ -38,6 +45,7 @@ public class BookService implements BookInterface {
                 throw new IllegalArgumentException("Book Name cannot be empty");
             }
             if (authorDTO.getId() != null) {
+                // check of author is present, if its present update, if not present add new author
                 Optional<Author> author = authorRepository.findById(authorDTO.getId());
                 if (author.isPresent()) {
                     author.get().addBook(book);
@@ -56,6 +64,12 @@ public class BookService implements BookInterface {
         bookRepository.save(book);
     }
 
+    /*
+    This only updates book name, isbn and category
+    Since requirement did not mention author update
+    @param not null id and bookDTO
+    @throws not found exception if Book is not found
+     */
     @Override
     public void update(Long id, BookDTO bookDTO) throws NotFoundException {
         if (id == null || bookDTO == null) {
@@ -77,6 +91,9 @@ public class BookService implements BookInterface {
         }
     }
 
+    /*
+    @return List of BookDTO
+     */
     @Override
     public List<BookDTO> getAll() {
         List<BookDTO> bookDTOS = new ArrayList<>();
@@ -90,6 +107,12 @@ public class BookService implements BookInterface {
         return bookDTOS;
     }
 
+    /*
+    This only deletes Book and its references in AuthorBook Table but author is not deleted from
+    author table
+    @param not null id
+    @throws Not Found Exception if Book is not found
+     */
     @Override
     public void delete(Long id) throws NotFoundException {
         if (id == null) {
@@ -108,6 +131,7 @@ public class BookService implements BookInterface {
         }
     }
 
+    
     @Override
     public BookDTO findOne(Long id) {
         Optional<Book> bookOptional = bookRepository.findById(id);

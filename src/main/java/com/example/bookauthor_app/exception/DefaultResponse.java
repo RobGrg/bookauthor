@@ -10,6 +10,10 @@ import java.util.Date;
 @Getter
 @Setter
 @AllArgsConstructor
+/*
+This will default Response.
+Response Details needed in future can be added here.
+ */
 public class DefaultResponse {
     private String status;
 }

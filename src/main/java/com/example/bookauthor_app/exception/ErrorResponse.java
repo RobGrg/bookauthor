@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Date;
 
+/*
+This holds response for all the exceptions
+ */
 @AllArgsConstructor
 @Setter
 @Getter

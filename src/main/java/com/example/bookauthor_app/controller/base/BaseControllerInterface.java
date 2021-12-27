@@ -2,7 +2,9 @@ package com.example.bookauthor_app.controller.base;
 
 import com.example.bookauthor_app.exception.NotFoundException;
 import org.springframework.http.ResponseEntity;
-
+/*
+This is the base interface for all the controllers that shares these common methods.
+ */
 public interface BaseControllerInterface<T, R extends Comparable<R>> {
     ResponseEntity<?> add(T t);
 
