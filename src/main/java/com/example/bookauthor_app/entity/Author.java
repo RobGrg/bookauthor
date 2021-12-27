@@ -28,10 +28,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-public class Author {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Author extends BaseEntity {
 
     @Column(name = "author_name", unique = true, nullable = false)
     @NotEmpty(message = "Please provide author name!")

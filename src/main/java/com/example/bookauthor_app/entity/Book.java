@@ -21,11 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Book {
-    // Generation Type Identity makes id creation handle by the database
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Book extends BaseEntity{
 
     @Column(name = "book_name", nullable = false, unique = true)
     @NotEmpty(message = "Please provide Book Name!")
