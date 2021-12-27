@@ -20,6 +20,11 @@ public class AuthorService implements AuthorInterface {
     private final AuthorRepository authorRepository;
     private final BookService bookService;
 
+    /*
+    @param not null authorDTO, it can have multiple child bookDTO
+    Books as child must be new for now
+    @throws Illegal Argument Exception for null violation and empty string
+     */
     @Override
     @Transactional
     public void add(AuthorDTO authorDTO) {
@@ -39,6 +44,9 @@ public class AuthorService implements AuthorInterface {
         });
     }
 
+    /*
+    Updates author name only
+     */
     @Override
     public void update(Long id, AuthorDTO authorDTO) throws NotFoundException {
         if (authorDTO == null) {
