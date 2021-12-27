@@ -9,7 +9,7 @@ import com.example.bookauthor_app.repository.AuthorRepository;
 import com.example.bookauthor_app.repository.BookRepository;
 import com.example.bookauthor_app.util.STATUS;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import net.bytebuddy.asm.Advice;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,7 +23,7 @@ public class BookService implements BookInterface {
 
     @Override
     @Transactional
-    public void addBook(BookDTO bookDTO) {
+    public void add(BookDTO bookDTO) {
         if (bookDTO.getBookName() == null) {
             throw new IllegalArgumentException("Book Name cannot be null");
         } else if (bookDTO.getBookName().isEmpty()) {
@@ -31,7 +31,7 @@ public class BookService implements BookInterface {
         }
         Book book = new Book(bookDTO.getBookName().trim().toLowerCase(), bookDTO.getIsbn(), bookDTO.getBookCategory());
         book.setStatus(STATUS.ACTIVE);
-        bookDTO.getAuthorDTOSet().forEach(authorDTO -> {
+        bookDTO.getAuthors().forEach(authorDTO -> {
             if (authorDTO.getAuthorName() == null) {
                 throw new IllegalArgumentException("Book Name cannot be null");
             } else if (authorDTO.getAuthorName().isEmpty()) {
@@ -57,7 +57,7 @@ public class BookService implements BookInterface {
     }
 
     @Override
-    public void updateBook(Long id, BookDTO bookDTO) throws NotFoundException {
+    public void update(Long id, BookDTO bookDTO) throws NotFoundException {
         if (id == null || bookDTO == null) {
             throw new NullPointerException("Id and Book cannot be null");
         } else {
@@ -78,7 +78,20 @@ public class BookService implements BookInterface {
     }
 
     @Override
-    public void deleteBook(Long id) throws NotFoundException {
+    public List<BookDTO> getAll() {
+        List<BookDTO> bookDTOS = new ArrayList<>();
+        bookRepository.findAll().forEach(book -> {
+            Set<AuthorDTO> authorDTOS = new HashSet<>();
+            book.getAuthors().forEach(author -> {
+                authorDTOS.add(new AuthorDTO(null, author.getAuthorName(), null));
+            });
+            bookDTOS.add(new BookDTO(book.getId(), book.getBookName(), book.getIsbn(), book.getBookCategory(), authorDTOS));
+        });
+        return bookDTOS;
+    }
+
+    @Override
+    public void delete(Long id) throws NotFoundException {
         if (id == null) {
             throw new NullPointerException("Id cannot be null");
         } else {
@@ -96,20 +109,7 @@ public class BookService implements BookInterface {
     }
 
     @Override
-    public List<BookDTO> getAllBooks() {
-        List<BookDTO> bookDTOS = new ArrayList<>();
-        bookRepository.findAll().forEach(book -> {
-            Set<AuthorDTO> authorDTOS = new HashSet<>();
-            book.getAuthors().forEach(author -> {
-                authorDTOS.add(new AuthorDTO(null, author.getAuthorName(), null));
-            });
-            bookDTOS.add(new BookDTO(book.getId(), book.getBookName(), book.getIsbn(), book.getBookCategory(), authorDTOS));
-        });
-        return bookDTOS;
-    }
-
-    @Override
-    public BookDTO findBookById(Long id) throws NotFoundException {
+    public BookDTO findOne(Long id) {
         Optional<Book> bookOptional = bookRepository.findById(id);
         if (bookOptional.isPresent()) {
             Book book = bookOptional.get();

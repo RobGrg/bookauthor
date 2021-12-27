@@ -33,7 +33,7 @@ public class AuthorService implements AuthorInterface {
             throw new IllegalArgumentException("The Author cannot be created without book.");
         }
         authorDTO.getBooks().forEach(bookDTO -> {
-            bookDTO.setAuthorDTOSet(Set.of(authorDTO));
+            bookDTO.setAuthors(Set.of(authorDTO));
             bookService.addBook(bookDTO);
         });
     }
