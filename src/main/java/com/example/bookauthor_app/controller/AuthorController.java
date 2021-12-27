@@ -24,7 +24,7 @@ import java.util.List;
 public class AuthorController implements BaseControllerInterface<AuthorDTO,Long> {
     private final AuthorService authorService;
 
-    @Operation(summary = "Add author with book written by them, Multiple")
+    @Operation(summary = "Add author with book written by them, Multiple Book can be added alongside author, however books must be new or have not added yet")
     @PostMapping("/add")
     @Override
     public ResponseEntity<DefaultResponse> add(@Valid @RequestBody AuthorDTO authorDTO) {
@@ -51,7 +51,7 @@ public class AuthorController implements BaseControllerInterface<AuthorDTO,Long>
         }
     }
 
-    @Operation(summary = "update author, requires id, updates only authorName")
+    @Operation(summary = "Update author, requires id, updates only authorName")
     @PutMapping("/update/{author_id}")
     @Override
     public ResponseEntity<?> update(@PathVariable(value = "author_id") Long id, @Valid @RequestBody AuthorDTO authorDTO) throws NotFoundException {
@@ -59,7 +59,7 @@ public class AuthorController implements BaseControllerInterface<AuthorDTO,Long>
         return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
-    @Operation(summary = "delete author by author id. This deletes authors and details from authorbooks {authorbooks" +
+    @Operation(summary = "Delete author by author id. This deletes authors and details from authorbooks {authorbooks" +
             " is the many to many child table between author and book} ")
     @DeleteMapping("/delete/{author_id}")
     @Override
@@ -68,7 +68,7 @@ public class AuthorController implements BaseControllerInterface<AuthorDTO,Long>
         return ResponseEntity.ok().body(new DefaultResponse(HttpStatus.OK.toString()));
     }
 
-    @Operation(summary = "filter author by book count they have written")
+    @Operation(summary = "Filter author by book count they have written")
     @GetMapping("/filterByBookCount/{count}")
     public ResponseEntity<?> filterAuthorByBookCount(@PathVariable(name = "count") int count) {
         return ResponseEntity.status(HttpStatus.OK).body(authorService.filterAuthorByBookCount(count));
