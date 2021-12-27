@@ -60,7 +60,7 @@ public class AuthorController implements BaseControllerInterface<AuthorDTO,Long>
 
     @GetMapping("/filterByBookCount/{count}")
     public ResponseEntity<?> filterAuthorByBookCount(@PathVariable(name = "count") int count) {
-        return ResponseEntity.status(HttpStatus.FOUND).body(authorService.filterAuthorByBookCount(count));
+        return ResponseEntity.status(HttpStatus.OK).body(authorService.filterAuthorByBookCount(count));
     }
 
 }
